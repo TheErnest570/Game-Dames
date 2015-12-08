@@ -6,7 +6,7 @@ Pawn[] blackPawns = new Pawn[20];
 
 void setup()
 {
-  noStroke();                                  //ALAN LE GROS BATARD TROLOLOLOLOL xD pouse vaire si t dacor lel !
+  noStroke();
   size(750, 500);
   get_coords();
   place_pawns();
