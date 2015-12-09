@@ -6,7 +6,7 @@ Pawn[] blackPawns = new Pawn[20];
 
 void setup()
 {
-  noStroke();                                  //ALAN LE GROS BATARD TROLOLOLOLOL xD pouse vaire si t dacor lel !
+  noStroke();
   size(750, 500);
   get_coords();
   place_pawns();
@@ -24,6 +24,7 @@ void draw()
   
 }
 
+// stocke les coordonées de chaque case du plateau dans les tableaux coordsX et coordsY
 void get_coords()
 {
   for(int x = 0 ; x < 10 ; x++)
@@ -36,6 +37,7 @@ void get_coords()
   }
 }
 
+//algorithme de placement des pions en début de partie
 void place_pawns()
 {
   char offset = 0,
@@ -52,6 +54,7 @@ void place_pawns()
   }  
 }
 
+//dessine la grille du plateau à l'écran
 void draw_board()
 {
   char c = 1;
@@ -89,6 +92,7 @@ class Pawn
     if(random(40) < 10) canGoBack = true;
   }
   
+  //dessine le pion à l'écran
   void update()
   {
     fill(c);
