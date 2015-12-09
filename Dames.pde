@@ -61,7 +61,7 @@ void draw_board()
     {
       if(c == 0) c = 1; else c = 0;
       
-      fill(c*#CCCCCC+#222222);
+      fill(c*#666666+#666666);
       rect(x * 50, y*50, 50, 50);    
     }
     if(c == 0) c = 1; else c = 0;
@@ -76,7 +76,7 @@ final static color WHITE = #FFFFFF;
 class Pawn
 {
   boolean canGoBack = false;
-  int x, y;
+  private int x, y;
   color c;
   
   Pawn(int x, int y, color c)
@@ -86,14 +86,24 @@ class Pawn
     this.c = c;
     // temp
     if(random(40) < 10) canGoBack = true;
+    
+    this.debug();
   }
+  
+  int getX() { return this.x; }
+  int getY() { return this.y; }
+  void setX(int x) { this.x = x; }
+  void setY(int y) { this.y = y; }
   
   //dessine le pion à l'écran
   void update()
   {
     fill(c);
     if(mouseX > coordsX[this.x] && mouseX < coordsX[this.x]+50 && mouseY > coordsY[this.y] && mouseY < coordsY[this.y]+50)
-      stroke(#33DD55);
+    {
+      strokeWeight(4);
+      stroke(#33AA33); 
+    }   
     
     ellipse(coordsX[this.x] + 25, coordsY[this.y] + 25, 50 / 1.2, 50 / 1.2);
     
@@ -108,4 +118,27 @@ class Pawn
 
     noStroke();
   }
+  
+  //affiche les informations sur le pion dans la console
+  void debug()
+  {
+     println("Color : " + ((c == BLACK) ? "WHITE" : "BLACK") + "  |  Location : " + x + ", " + y); 
+  }
+}
+
+//récupère un pointeur sur le pion se trouvant sur la case x, y -> retourne null si aucun pion ne se trouve à cet endroit
+public Pawn getPawnByLocation(int x, int y)
+{
+  Pawn p = null;
+  
+  for(int i = 0; i < 40; i++) {
+    if(i < 20) {
+      p = whitePawns[i];
+    } else {
+      p = blackPawns[i];
+    }
+    if(p.getX() == x && p.getY() == y) break;
+  }
+  
+  return p;
 }
