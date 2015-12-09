@@ -1,3 +1,13 @@
+/* * TODO :
+
+- algo de détection des déplacements des pions
+
+
+
+* * * * */
+
+static final int GRID_SIZE = 10;
+
 int[] coordsX = new int[100];
 int[] coordsY = new int[100];
 
@@ -21,7 +31,8 @@ void draw()
     whitePawns[i].update();
     blackPawns[i].update();
   }
-  
+  /*fill(#FF0000);
+  rect(0, 0, 64, 64);*/
 }
 
 // stocke les coordonées de chaque case du plateau dans les tableaux coordsX et coordsY
@@ -45,7 +56,7 @@ void place_pawns()
   for(int l = 0 ; l < 4 ; l++) {
     for(int c = 0; c < 5 ; c++) {
       whitePawns[numb] = new Pawn((c*2) + (l % 2), l, WHITE);
-      blackPawns[numb++] = new Pawn((c*2) + (l % 2), l+6, BLACK);   
+      blackPawns[numb++] = new Pawn((c*2) + (l % 2), l+6, BLACK);
     }
   }  
 }
@@ -61,7 +72,7 @@ void draw_board()
     {
       if(c == 0) c = 1; else c = 0;
       
-      fill(c*#666666+#666666);
+      fill(c*#222222+#79725F);
       rect(x * 50, y*50, 50, 50);    
     }
     if(c == 0) c = 1; else c = 0;
@@ -85,7 +96,7 @@ class Pawn
     this.y = y;
     this.c = c;
     // temp
-    if(random(40) < 10) canGoBack = true;
+    //if(random(40) < 10) canGoBack = true;
     
     this.debug();
   }
@@ -98,13 +109,14 @@ class Pawn
   //dessine le pion à l'écran
   void update()
   {
-    fill(c);
+    
     if(mouseX > coordsX[this.x] && mouseX < coordsX[this.x]+50 && mouseY > coordsY[this.y] && mouseY < coordsY[this.y]+50)
     {
+      renderMoveLocations(getMoveLocations());
       strokeWeight(4);
-      stroke(#33AA33); 
-    }   
-    
+      stroke(#33AA33);  
+    }
+    fill(c);
     ellipse(coordsX[this.x] + 25, coordsY[this.y] + 25, 50 / 1.2, 50 / 1.2);
     
     if(canGoBack)
@@ -124,19 +136,59 @@ class Pawn
   {
      println("Color : " + ((c == BLACK) ? "WHITE" : "BLACK") + "  |  Location : " + x + ", " + y); 
   }
+  
+  //récupère un tableau contenant les cases sur lesquelles le pion peut se déplacer
+  public ArrayList<PVector> getMoveLocations()
+  {
+    ArrayList<PVector> ml = new ArrayList<PVector>();
+    /*
+    o o
+     x 
+    o o
+    */
+    if(this.c == WHITE) {
+      if(!this.canGoBack) {
+        if(x > 0 /*&& getPawnByLocation(x-1, y+1) == null*/) 
+        {
+          ml.add(new PVector(x-1, y+1));
+          println("test"); 
+        }
+           
+      } else { // le pion est une damme
+        
+      }
+    } else {
+      if(!this.canGoBack) {
+        
+      } else { // le pion est une damme
+        
+      }
+    }
+    
+    return ml;
+  }
+  
+  public void renderMoveLocations(ArrayList<PVector> ml)
+  {
+    for(int i = 0 ; i < ml.size() ; i++)
+    {
+      fill(#628348);
+      rect(coordsX[ (int) ml.get(i).x], coordsY[ (int) ml.get(i).y], 50, 50);
+      
+    }
+  }
 }
 
 //récupère un pointeur sur le pion se trouvant sur la case x, y -> retourne null si aucun pion ne se trouve à cet endroit
+
 public Pawn getPawnByLocation(int x, int y)
 {
   Pawn p = null;
   
-  for(int i = 0; i < 40; i++) {
-    if(i < 20) {
-      p = whitePawns[i];
-    } else {
-      p = blackPawns[i];
-    }
+  for(int i = 0; i < 20; i++) {
+    p = whitePawns[i];
+    if(p.getX() == x && p.getY() == y) break;
+    p = blackPawns[i];
     if(p.getX() == x && p.getY() == y) break;
   }
   
