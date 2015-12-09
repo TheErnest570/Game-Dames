@@ -40,17 +40,13 @@ void get_coords()
 //algorithme de placement des pions en début de partie
 void place_pawns()
 {
-  char offset = 0,
-       numb = 0;
-                
-  for(int cols = 0 ; cols < 4 ; cols++)
-  {
-    for(int ln = offset; ln < 10 ; ln += 2)
-    {
-      whitePawns[numb] = new Pawn(ln, cols, WHITE);
-      blackPawns[numb++] = new Pawn(ln, cols+6, BLACK);   
+  char numb = 0;
+  
+  for(int l = 0 ; l < 4 ; l++) {
+    for(int c = 0; c < 5 ; c++) {
+      whitePawns[numb] = new Pawn((c*2) + (l % 2), l, WHITE);
+      blackPawns[numb++] = new Pawn((c*2) + (l % 2), l+6, BLACK);   
     }
-    if(offset == 1) offset = 0; else offset = 1;
   }  
 }
 
@@ -65,7 +61,7 @@ void draw_board()
     {
       if(c == 0) c = 1; else c = 0;
       
-      fill(c*#AAAAAA+#444444);
+      fill(c*#CCCCCC+#222222);
       rect(x * 50, y*50, 50, 50);    
     }
     if(c == 0) c = 1; else c = 0;
