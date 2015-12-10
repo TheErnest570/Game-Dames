@@ -84,9 +84,14 @@ void draw_board()
 final static color BLACK = #000000;
 final static color WHITE = #FFFFFF;
 
+
+
+
+
 class Pawn
 {
-  boolean canGoBack = false;
+  private boolean canGoBack = false;
+  private boolean isDead = false;
   private int x, y;
   color c;
   
@@ -103,8 +108,10 @@ class Pawn
   
   int getX() { return this.x; }
   int getY() { return this.y; }
+  boolean isDead() { return this.isDead; }
   void setX(int x) { this.x = x; }
   void setY(int y) { this.y = y; }
+  void setDead(boolean b) { this.isDead = b; }
   
   //dessine le pion à l'écran
   void update()
@@ -148,10 +155,15 @@ class Pawn
     */
     if(this.c == WHITE) {
       if(!this.canGoBack) {
-        if(x > 0 /*&& getPawnByLocation(x-1, y+1) == null*/) 
+        if(x > 0 && getPawnByLocation(x-1, y+1) == null) 
         {
           ml.add(new PVector(x-1, y+1));
-          println("test"); 
+        }
+        
+        if(x < 9 && getPawnByLocation(x+1, y+1) == null)
+        {
+          ml.add(new PVector(x+1, y+1));
+          println("test");
         }
            
       } else { // le pion est une damme
@@ -174,10 +186,15 @@ class Pawn
     {
       fill(#628348);
       rect(coordsX[ (int) ml.get(i).x], coordsY[ (int) ml.get(i).y], 50, 50);
-      
     }
   }
 }
+
+
+
+
+
+
 
 //récupère un pointeur sur le pion se trouvant sur la case x, y -> retourne null si aucun pion ne se trouve à cet endroit
 
@@ -187,9 +204,10 @@ public Pawn getPawnByLocation(int x, int y)
   
   for(int i = 0; i < 20; i++) {
     p = whitePawns[i];
-    if(p.getX() == x && p.getY() == y) break;
+    if(p.getX() == x && p.getY() == y && !p.isDead()) break;
     p = blackPawns[i];
-    if(p.getX() == x && p.getY() == y) break;
+    if(p.getX() == x && p.getY() == y && !p.isDead()) break; 
+    p = null;
   }
   
   return p;
