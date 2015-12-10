@@ -19,7 +19,8 @@ void setup()
   noStroke();
   size(750, 500);
   get_coords();
-  place_pawns();
+  //place_pawns();
+  place_pawns_with_array();
 }
 
 void draw()
@@ -59,6 +60,38 @@ void place_pawns()
       blackPawns[numb++] = new Pawn((c*2) + (l % 2), l+6, BLACK);
     }
   }  
+}
+
+//utilise un tableau pour placer les pions sur la grille -> DEBUG FUNCTION
+void place_pawns_with_array()
+{
+   int wn = 0, bn = 0;
+  
+   char[][] pawns = 
+   {
+     {1,0,1,0,1,0,1,0,1,0},
+     {0,1,0,1,0,1,2,1,0,1},
+     {2,0,1,0,0,0,0,0,0,0},
+     {2,0,0,2,1,0,0,0,0,2},
+     {0,0,0,0,0,0,1,2,0,0},
+     {0,0,1,0,0,1,0,0,2,2},
+     {2,0,0,0,0,0,2,0,0,2},
+     {0,2,1,0,1,0,0,1,0,0},
+     {2,0,0,2,2,2,2,0,2,0},
+     {0,2,0,0,2,1,0,0,1,0}
+   };  
+   
+   for(int y = 0 ; y < 10 ; y++)
+   {
+      for(int x = 0 ; x < 10 ; x++)
+      {
+        if(pawns[y][x] == 1) {
+          whitePawns[wn++] = new Pawn(x, y, WHITE);
+        } else if (pawns[y][x] == 2) {
+          blackPawns[bn++] = new Pawn(x, y, BLACK);            
+        }
+      }
+   }  
 }
 
 //dessine la grille du plateau à l'écran
@@ -155,7 +188,7 @@ class Pawn
     */
     if(this.c == WHITE) {
       if(!this.canGoBack) {
-        if(x > 0 && getPawnByLocation(x-1, y+1) == null) 
+        if(x > 0 && getPawnByLocation(x-1, y+1) == null)
         {
           ml.add(new PVector(x-1, y+1));
         }
@@ -163,7 +196,6 @@ class Pawn
         if(x < 9 && getPawnByLocation(x+1, y+1) == null)
         {
           ml.add(new PVector(x+1, y+1));
-          println("test");
         }
            
       } else { // le pion est une damme
