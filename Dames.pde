@@ -69,15 +69,15 @@ void place_pawns_with_array()
   
    char[][] pawns = 
    {
-     {1,0,1,0,1,0,1,0,1,0},
+     {1,0,1,0,1,0,1,0,2,0},
      {0,1,0,1,0,1,2,1,0,1},
      {2,0,1,0,0,0,0,0,0,0},
      {2,0,0,2,1,0,0,0,0,2},
-     {0,0,0,0,0,0,1,2,0,0},
-     {0,0,1,0,0,1,0,0,2,2},
-     {2,0,0,0,0,0,2,0,0,2},
+     {0,1,0,0,0,0,1,2,0,0},
+     {0,0,1,0,0,1,0,0,2,0},
+     {2,0,0,0,0,0,2,2,0,2},
      {0,2,1,0,1,0,0,1,0,0},
-     {2,0,0,2,2,2,2,0,2,0},
+     {0,0,0,2,2,2,2,0,2,0},
      {0,2,0,0,2,1,0,0,1,0}
    };  
    
@@ -188,12 +188,12 @@ class Pawn
     */
     if(this.c == WHITE) {
       if(!this.canGoBack) {
-        if(x > 0 && getPawnByLocation(x-1, y+1) == null)
+        if(x > 0 && y < 9 && getPawnByLocation(x-1, y+1) == null)
         {
           ml.add(new PVector(x-1, y+1));
         }
         
-        if(x < 9 && getPawnByLocation(x+1, y+1) == null)
+        if(x < 9 && y < 9 && getPawnByLocation(x+1, y+1) == null)
         {
           ml.add(new PVector(x+1, y+1));
         }
@@ -203,7 +203,15 @@ class Pawn
       }
     } else {
       if(!this.canGoBack) {
+        if(x > 0 && y > 0 && getPawnByLocation(x-1, y-1) == null)
+        {
+          ml.add(new PVector(x-1, y-1));
+        }
         
+        if(x < 9 && y > 0 && getPawnByLocation(x+1, y-1) == null)
+        {
+          ml.add(new PVector(x+1, y-1));
+        }
       } else { // le pion est une damme
         
       }
