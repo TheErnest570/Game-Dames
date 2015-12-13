@@ -32,10 +32,25 @@ void draw()
 {
   clear();
   draw_board(); // dessine les cases du polateau de jeu
-  for(int i = 0 ; i < 20 ; i++) // met à jour et dessine tous les pions sur le plateau
-  {
-    whitePawns[i].update();
-    blackPawns[i].update();
+  
+  for(int i = 0 ; i < 40 ; i++) { // met à jour et dessine tous les pions sur le plateau
+    Pawn p;
+    p = (i < 20) ? whitePawns[i] : blackPawns[i-20];
+    
+    p.update();
+  }
+  
+  for(int i = 0 ; i < 40 ; i++) {// si le canEat d'un pion !=null, on surligne les cibles en rouge
+    Pawn p;
+    p = (i < 20) ? whitePawns[i] : blackPawns[i-20];
+     
+    ArrayList<PVector> ce = p.getCanEat();
+    if(ce != null)
+      for(int u = 0 ; u < ce.size() ; u++) {
+         Pawn ep = getPawnByLocation((int) ce.get(u).x, (int) ce.get(u).y);
+         highlight_red(ep);
+      }
+    p.setCanEat(null);
   }
 }
 
@@ -117,6 +132,13 @@ void draw_board()
     }
     if(c == 0) c = 1; else c = 0;
   }
+}
+
+void highlight_red(Pawn p)
+{
+  noStroke();
+  fill(#792E2E, 128);
+  rect(coordsX[p.getX()], coordsY[p.getY()], 50, 50);
 }
 
 
