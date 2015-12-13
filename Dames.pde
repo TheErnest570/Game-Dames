@@ -1,13 +1,17 @@
 /* * TODO :
 
-- algo de détection des déplacements des pions
+- GUI
 
 
 
 * * * * */
 
+PFont consolas;
+
+
 // taille d'un coté du plateau (en cases)
 static final int GRID_SIZE = 10;
+
 
 // contient les coordonnées en pixels de toutes les cases du plateau
 int[] coordsX = new int[100];
@@ -17,9 +21,17 @@ int[] coordsY = new int[100];
 Pawn[] whitePawns = new Pawn[20];
 Pawn[] blackPawns = new Pawn[20];
 
+//turn vars
+color turn = BLACK;
+boolean initBlackTurn = true;
+boolean initWhiteTurn = true;
+boolean blackMoved = false;
+boolean whiteMoved = false;
 
 void setup()
 {
+  consolas = loadFont("Consolas-48.vlw");
+  
   noStroke();
   size(750, 500); //50 * GRID_SIZE
   get_coords(); // initialise les tableaux de coordonnées
@@ -30,7 +42,13 @@ void setup()
 
 void draw()
 {
-  clear();
+  if(initBlackTurn) {
+    blackMoved = false;
+  } else if(initBlackTurn) {
+    whiteMoved = false;
+  }
+  
+  background(#555555);
   draw_board(); // dessine les cases du polateau de jeu
   
   for(int i = 0 ; i < 40 ; i++) { // met à jour et dessine tous les pions sur le plateau
@@ -52,6 +70,8 @@ void draw()
       }
     p.setCanEat(null);
   }
+  
+  draw_gui();
 }
 
 
@@ -100,7 +120,7 @@ void place_pawns_with_array()
      {0,2,1,0,1,0,0,1,0,0},
      {0,0,0,2,2,2,2,0,2,0},
      {0,2,0,0,2,1,0,0,1,0}
-   };  
+   };
    
    for(int y = 0 ; y < 10 ; y++)
    {
@@ -121,10 +141,8 @@ void draw_board()
 {
   char c = 1;
  
-  for(int x = 0 ; x < 10 ; x++)
-  {
-    for(int y = 0 ; y < 10 ; y++)
-    {
+  for(int x = 0 ; x < 10 ; x++) {
+    for(int y = 0 ; y < 10 ; y++) {
       if(c == 0) c = 1; else c = 0;
       
       fill(c*#222222+#79725F);
@@ -133,6 +151,26 @@ void draw_board()
     if(c == 0) c = 1; else c = 0;
   }
 }
+
+//dessine l'interface graphique :
+// -> couleur du tour en cours
+// ->
+void draw_gui()
+{
+  String str;
+  if(turn == WHITE) {
+    fill(WHITE);
+    str = "WHITE";
+  } else {
+    fill(BLACK);
+    str = "BLACK";
+  }
+ 
+  //textFont(consolas);
+  textSize(32);
+  text(str, 508, 32);
+}
+
 
 void highlight_red(Pawn p)
 {

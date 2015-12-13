@@ -1,7 +1,7 @@
 class Pawn
 {
   public static final float PAWN_SIZE = 50 / 1.2;
-   
+    
   private boolean canGoBack = false; // le pion est une Dame
   private boolean isDead = false; // le pion a été bouffé
   private int x, y; // coordonnées du pion (en cases)
@@ -11,6 +11,12 @@ class Pawn
   private ArrayList<PVector> canEat;
   
   
+  //turn var
+  boolean dragged = false;
+  int dragXStart, dragYStart, // début du drag
+      dragXEnd, dragYEnd, // fin du drag
+      dragXOrigin, dragYOrigin; // coordonnées X et Y de la souris par rapport au pion cliqué
+
   Pawn(int x, int y, color c)
   {
     this.x = x;
@@ -22,7 +28,7 @@ class Pawn
     
     this.debug(); // affiche les infos concernant le pions : coords & couleur
   }
-  
+
   //Getters / Setters
   int getX() { return this.x; }
   int getY() { return this.y; }
@@ -32,7 +38,7 @@ class Pawn
   void setY(int y) { this.y = y; }
   void setDead(boolean b) { this.isDead = b; }
   void setCanEat(ArrayList ce) { this.canEat = ce; }
-  
+
   //dessine le pion à l'écran
   void update()
   {
@@ -41,7 +47,7 @@ class Pawn
     
     
     // ********** RENDER ***********
-    if(mouseX > coordsX[this.x] && mouseX < coordsX[this.x]+50 && mouseY > coordsY[this.y] && mouseY < coordsY[this.y]+50) // si la souris est sur la case du pion
+    if(this.isMouseOn() && turn == c) // si la souris est sur la case du pion
     {
       renderMoveLocations(getMoveLocations()); // on surligne les cases sur lesquelles il est possible de se déplacer
       strokeWeight(4);
@@ -61,6 +67,24 @@ class Pawn
 
     noStroke();
   }
+  
+  public boolean isMouseOn()
+  {
+    boolean r = (mouseX > coordsX[this.x] && mouseX < coordsX[this.x]+50 && mouseY > coordsY[this.y] && mouseY < coordsY[this.y]+50);
+    return r;
+  }
+  
+  public boolean isMouseOn(Pawn p)
+  {
+    boolean r = (mouseX > coordsX[p.x] && mouseX < coordsX[p.x]+50 && mouseY > coordsY[p.y] && mouseY < coordsY[p.y]+50);
+    return r;
+  }
+  
+  /*public boolean isDraggedOn(PVector c)
+  {
+    boolean r = 
+    return r;
+  }*/
   
   //affiche les informations sur le pion dans la console
   void debug()
