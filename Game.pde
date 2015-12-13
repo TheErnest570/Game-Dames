@@ -21,7 +21,7 @@ Pawn[] blackPawns = new Pawn[20];
 void setup()
 {
   noStroke();
-  size(750, GRID_SIZE * 50);
+  size(750, 500); //50 * GRID_SIZE
   get_coords(); // initialise les tableaux de coordonnées
   //place_pawns();
   place_pawns_with_array(); // fonction de debug permettant d'avoir des pions placés n'importe ou sur le plateau en début de partie
