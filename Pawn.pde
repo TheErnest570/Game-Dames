@@ -8,14 +8,13 @@ class Pawn
   color c; // couleur du pion (BLACK ou WHITE)
   
   //GRAPHIC VARS 
-  private ArrayList<PVector> canEat;
+  private ArrayList<PVector> canEat; // liste des pions pouvant être bouffés durant le tour
+  private ArrayList<PVector> eatLocations; // associe chaque pion bouffable a la position que doit prendre le joueur pour bouffer ce pion
   
   
   //turn var
   boolean dragged = false;
-  int dragXStart, dragYStart, // début du drag
-      dragXEnd, dragYEnd, // fin du drag
-      dragXOrigin, dragYOrigin; // coordonnées X et Y de la souris par rapport au pion cliqué
+  
 
   Pawn(int x, int y, color c)
   {
@@ -34,39 +33,97 @@ class Pawn
   int getY() { return this.y; }
   boolean isDead() { return this.isDead; }
   ArrayList<PVector> getCanEat() { return this.canEat; }
+  ArrayList<PVector> getEatLocations() { return this.eatLocations; }
   void setX(int x) { this.x = x; }
   void setY(int y) { this.y = y; }
   void setDead(boolean b) { this.isDead = b; }
   void setCanEat(ArrayList ce) { this.canEat = ce; }
+  void setEatLocations(ArrayList el) { this.eatLocations = el; }
 
   //dessine le pion à l'écran
   void update()
   {
-    // ********** UPDATE ***********
+    
     
     
     
     // ********** RENDER ***********
-    if(this.isMouseOn() && turn == c) // si la souris est sur la case du pion
-    {
-      renderMoveLocations(getMoveLocations()); // on surligne les cases sur lesquelles il est possible de se déplacer
-      strokeWeight(4);
-      stroke(#33AA33);
+    if(!isDead) {
+      if(((this.isMouseOn() && draggedPawn == null) || draggedPawn == this) && turn == c ) // si la souris est sur la case du pion ou si le pion est drag
+      {
+        if(draggedPawn == this) renderMoveLocations(getMoveLocations()); // on surligne les cases sur lesquelles il est possible de se déplacer
+        strokeWeight(4);
+        stroke(#33AA33);
+      }
+      fill(c);
+      ellipse(coordsX[this.x] + 25, coordsY[this.y] + 25, PAWN_SIZE, PAWN_SIZE); // on dessine le pion en fonction de ses coordonnées et avec la couleur
+  
+      if(canGoBack) // si le pion est une Dame : on lui dessine un cercle rouge
+      {
+        noFill();
+        strokeWeight(2);
+        stroke(#DD2222);
+        ellipse(coordsX[this.x] + 25, coordsY[this.y] + 25, 50 / 2, 50 / 2);
+        strokeWeight(1);
+      }
+      
+      
+      noStroke();
     }
-    fill(c);
-    ellipse(coordsX[this.x] + 25, coordsY[this.y] + 25, PAWN_SIZE, PAWN_SIZE); // on dessine le pion en fonction de ses coordonnées et avec la couleur
-
-    if(canGoBack) // si le pion est une Dame : on lui dessine un cercle rouge
-    {
-      noFill();
-      strokeWeight(2);
-      stroke(#DD2222);
-      ellipse(coordsX[this.x] + 25, coordsY[this.y] + 25, 50 / 2, 50 / 2);
-      strokeWeight(1);
+    
+    
+    // ********** UPDATE ***********
+    
+    if(draggedPawn == null) { // aucun pion n'est encore drag
+      if(this.isMouseOn() && mousePressed && turn == c) {
+        draggedPawn = this;
+        draggedPawn.dragged = true;
+        println("drag " + random(10));
+        
+        dragXStart = mouseX;
+        dragYStart = mouseY;
+        dragXEnd = mouseX;
+        dragYEnd = mouseY;
+        
+      }
+    } else {
+      if(!mousePressed) {
+        
+        //déplacement si possible du pion :
+        ArrayList<PVector> mvl = draggedPawn.getMoveLocations();
+        if(mvl != null) {
+          PVector msl = draggedPawn.getMouseLocation();
+          for(int i = 0 ; i < mvl.size() ; i++) {
+            if(mvl.get(i).x == msl.x && mvl.get(i).y == msl.y) {
+              draggedPawn.move((int)msl.x, (int)msl.y);
+              println("Moved ! ");
+              /*
+              ArrayList<PVector> ce = this.getCanEat();
+              ArrayList<PVector> el = this.getEatLocations();
+              if(canEat != null)
+              {
+                println("ALERT");
+                for(int u = 0; u < el.size() ; u++)
+                {
+                  if(draggedPawn.getX() == el.get(u).x && draggedPawn.getY() == el.get(u).y) 
+                  {
+                    getPawnByLocation((int)ce.get(u).x, (int)ce.get(u).y).setDead(true);
+                  }
+                }
+              }*/
+              
+              turn = (turn == WHITE) ? BLACK : WHITE; 
+            }
+          }
+        }
+        draggedPawn.dragged = false;
+        draggedPawn = null;
+      }
+      dragXEnd = mouseX;
+      dragYEnd = mouseY;
     }
-
-    noStroke();
   }
+  
   
   public boolean isMouseOn()
   {
@@ -80,11 +137,26 @@ class Pawn
     return r;
   }
   
-  /*public boolean isDraggedOn(PVector c)
+  public PVector getMouseLocation()
   {
-    boolean r = 
+    PVector r = new PVector(-1, -1);
+    
+    for(int x = 0; x < 10 ; x++) {
+      for(int y = 0; y < 10 ; y++) {
+        if(mouseX > coordsX[x] && mouseX < coordsX[x]+50 && mouseY > coordsY[y] && mouseY < coordsY[y]+50)
+        {
+          r.x = x;
+          r.y = y;
+        }
+      }
+    }
     return r;
-  }*/
+  }
+  
+  private void move(int x, int y) {
+     this.setX(x);
+     this.setY(y);
+  }
   
   //affiche les informations sur le pion dans la console
   void debug()
@@ -107,6 +179,7 @@ class Pawn
             ml.add(new PVector(x-2, y+2));
             initCanEat();
             canEat.add(new PVector(x-1, y+1));
+            eatLocations.add(new PVector(x-2, y+2));
           }
         }
         
@@ -117,6 +190,7 @@ class Pawn
             ml.add(new PVector(x+2, y+2));
             initCanEat();
             canEat.add(new PVector(x+1, y+1));
+            eatLocations.add(new PVector(x+2, y+2));
           }
         }
            
@@ -133,6 +207,7 @@ class Pawn
             ml.add(new PVector(x-2, y-2));
             initCanEat();
             canEat.add(new PVector(x-1, y-1));
+            eatLocations.add(new PVector(x-2, y-2));
           } 
         }
         
@@ -143,6 +218,7 @@ class Pawn
             ml.add(new PVector(x+2, y-2));
             initCanEat();
             canEat.add(new PVector(x+1, y-1));
+            eatLocations.add(new PVector(x+2, y-2));
           }
         }
       } else { // le pion est une damme
@@ -158,6 +234,14 @@ class Pawn
   {
     if(canEat == null)
       canEat = new ArrayList<PVector>();
+    
+    initEatLocation();
+  }
+  
+  private void initEatLocation()
+  {
+    if(eatLocations == null)
+      eatLocations = new ArrayList<PVector>();
   }
   
   // surligne les cases dont les coords sont stockées dans L'ArrayList ml

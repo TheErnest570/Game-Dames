@@ -1,8 +1,8 @@
 /* * TODO :
 
 - GUI
-
-
+- peut bouffer un pion en reculant
+- compter les pions morts
 
 * * * * */
 
@@ -27,6 +27,11 @@ boolean initBlackTurn = true;
 boolean initWhiteTurn = true;
 boolean blackMoved = false;
 boolean whiteMoved = false;
+
+Pawn draggedPawn = null;
+int dragXStart, dragYStart, // début du drag
+      dragXEnd, dragYEnd; // fin du drag
+      //dragXOrigin, dragYOrigin; // coordonnées X et Y de la souris par rapport au pion cliqué
 
 void setup()
 {
@@ -69,6 +74,13 @@ void draw()
          highlight_red(ep);
       }
     p.setCanEat(null);
+    p.setEatLocations(null);
+  }
+  
+  if(draggedPawn != null) {
+    stroke(#33AA33);
+    line(dragXStart, dragYStart, dragXEnd, dragYEnd);
+    noStroke();
   }
   
   draw_gui();
